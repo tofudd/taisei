@@ -16,8 +16,8 @@
 #include "stageutils.h"
 #include "util/glm.h"
 #include "portrait.h"
-
-MODERNIZE_THIS_FILE_AND_REMOVE_ME
+#include "stagedraw.h"
+#include "common_tasks.h"
 
 /*
  *  See the definition of AttackInfo in boss.h for information on how to set up the idmaps.
@@ -28,28 +28,28 @@ struct stage3_spells_s stage3_spells = {
 	.mid = {
 		.deadly_dance = {
 			{ 0,  1,  2,  3}, AT_SurvivalSpell, "Venom Sign “Deadly Dance”", 14, 40000,
-			scuttle_deadly_dance, scuttle_spellbg, BOSS_DEFAULT_GO_POS, 3
+			NULL, scuttle_spellbg, VIEWPORT_W/2.0+100*I, 1, TASK_INDIRECT_INIT(BossAttack, stage3_spell_deadly_dance)
 		},
 	},
 
 	.boss = {
 		.moonlight_rocket = {
 			{ 6,  7,  8,  9}, AT_Spellcard, "Firefly Sign “Moonlight Rocket”", 40, 40000,
-			wriggle_moonlight_rocket, wriggle_spellbg, BOSS_DEFAULT_GO_POS, 3
+			NULL, wriggle_spellbg, VIEWPORT_W/2.0+100*I, 1, TASK_INDIRECT_INIT(BossAttack, stage3_spell_moonlight_rocket)
 		},
 		.wriggle_night_ignite = {
 			{10, 11, 12, 13}, AT_Spellcard, "Light Source “Wriggle Night Ignite”", 50, 46000,
-			wriggle_night_ignite, wriggle_spellbg, BOSS_DEFAULT_GO_POS, 3
+			NULL, wriggle_spellbg, VIEWPORT_W/2.0+100*I, 1, TASK_INDIRECT_INIT(BossAttack, stage3_spell_night_ignite)
 		},
 		.firefly_storm = {
 			{14, 15, 16, 17}, AT_Spellcard, "Bug Sign “Firefly Storm”", 45, 45000,
-			wriggle_firefly_storm, wriggle_spellbg, BOSS_DEFAULT_GO_POS, 3
+			NULL, wriggle_spellbg, VIEWPORT_W/2.0+100*I, 1, TASK_INDIRECT_INIT(BossAttack, stage3_spell_firefly_storm)
 		},
 	},
 
 	.extra.light_singularity = {
 		{ 0,  1,  2,  3}, AT_ExtraSpell, "Lamp Sign “Light Singularity”", 75, 45000,
-		wriggle_light_singularity, wriggle_spellbg, BOSS_DEFAULT_GO_POS, 3
+			NULL, wriggle_spellbg, VIEWPORT_W/2.0+100*I, 1, TASK_INDIRECT_INIT(BossAttack, stage3_spell_light_singularity)
 	},
 };
 
@@ -196,7 +196,7 @@ static bool stage3_glitch(Framebuffer *fb) {
 	return true;
 }
 
-static void stage3_start(void) {
+static void stage3_init_background(void) {
 	stage3d_init(&stage_3d_context, 16);
 
 	stage_3d_context.cx[1] = -16;
@@ -204,6 +204,13 @@ static void stage3_start(void) {
 	stage_3d_context.cv[1] = 0.1;
 	stage_3d_context.cv[2] = 0.05;
 
+}
+
+static void stage3_start(void) {
+	stage3_init_background();
+	stage_start_bgm("stage3");
+	stage_set_voltage_thresholds(50, 125, 300, 600);
+	INVOKE_TASK(stage3_main);
 }
 
 static void stage3_preload(void) {
@@ -273,16 +280,12 @@ static void stage3_update(void) {
 		return;
 	}
 
-	// 2740 - MIDBOSS
-
 	stage3d_update(&stage_3d_context);
 }
 
 void scuttle_spellbg(Boss*, int t);
 
 static void stage3_spellpractice_start(void) {
-	stage3_start();
-
 	if(global.stage->spell->draw_rule == scuttle_spellbg) {
 		skip_background_anim(stage3_update, 2800, &global.timer, NULL);
 		global.boss = stage3_spawn_scuttle(BOSS_DEFAULT_SPAWN_POS);
@@ -315,7 +318,6 @@ StageProcs stage3_procs = {
 	.end = stage3_end,
 	.draw = stage3_draw,
 	.update = stage3_update,
-	.event = stage3_events,
 	.shader_rules = stage3_shaders,
 	.postprocess_rules = stage3_postprocess,
 	.spellpractice_procs = &stage3_spell_procs,
@@ -327,7 +329,6 @@ StageProcs stage3_spell_procs = {
 	.end = stage3_end,
 	.draw = stage3_draw,
 	.update = stage3_update,
-	.event = stage3_spellpractice_events,
 	.shader_rules = stage3_shaders,
 	.postprocess_rules = stage3_postprocess,
 };
