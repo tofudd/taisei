@@ -14,11 +14,40 @@
 #include "global.h"
 #include "stageutils.h"
 
-void stage5_update(void) {
-	stage_3d_context.cam.aspect = STAGE3D_DEFAULT_ASPECT; // FIXME
-	stage_3d_context.cam.near = 100;
-	stage_3d_context.cam.far = 20000;
+TASK(stage5_bg_update, NO_ARGS) {
+	Camera3D *cam = &stage_3d_context.cam;
+	float r = 3.7;
+	float vel = -0.01/r;
+	for(int i = 0;; i++) {
+		stage3d_update(&stage_3d_context);
+		cam->rot.v[2] = 180/M_PI*vel*i-210;
+		cam->pos[0] = r*cos(vel*i);
+		cam->pos[1] = r*sin(vel*i);
 
+		cam->pos[2] = 2.6 - 11.2/M_TAU*vel*i;
+
+		
+		YIELD;
+	}
+}
+
+void stage5_bg_init_fullstage(void) {
+	Camera3D *cam = &stage_3d_context.cam;
+	cam->pos[0] = 0;
+	cam->pos[1] = 2.5;
+	//cam->pos[2] = 0.1;
+	//cam->vel[2] = 0.01;
+	cam->rot.v[2] = 180;
+	cam->rot.v[0] = 80;
+	cam->fovy = STAGE3D_DEFAULT_FOVY*1.5;
+	INVOKE_TASK(stage5_bg_update);
+}
+
+void stage5_bg_init_spellpractice(void) {
+	stage5_bg_init_fullstage();
+}
+
+void stage5_update(void) {
 	Stage5DrawData *stage5_draw_data = stage5_get_draw_data();
 
 	TIMER(&global.timer);
