@@ -51,6 +51,7 @@ struct stage5_spells_s stage5_spells = {
 
 static void stage5_start(void) {
 	stage5_drawsys_init();
+	stage5_bg_init_fullstage();
 }
 
 static void stage5_preload(void) {
@@ -94,7 +95,8 @@ static void stage5_end(void) {
 }
 
 static void stage5_spellpractice_start(void) {
-	stage5_start();
+	stage5_drawsys_init();
+	stage5_bg_init_spellpractice();
 
 	global.boss = stage5_spawn_iku(BOSS_DEFAULT_SPAWN_POS);
 	boss_add_attack_from_info(global.boss, global.stage->spell, true);
@@ -110,7 +112,6 @@ StageProcs stage5_procs = {
 	.preload = stage5_preload,
 	.end = stage5_end,
 	.draw = stage5_draw,
-	.update = stage5_update,
 	.event = stage5_events,
 	.shader_rules = stage5_shaders,
 	.spellpractice_procs = &stage5_spell_procs,
@@ -121,6 +122,5 @@ StageProcs stage5_spell_procs = {
 	.preload = stage5_preload,
 	.end = stage5_end,
 	.draw = stage5_draw,
-	.update = stage5_update,
 	.shader_rules = stage5_shaders,
 };

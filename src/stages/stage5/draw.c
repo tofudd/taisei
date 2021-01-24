@@ -12,6 +12,7 @@
 
 #include "global.h"
 #include "stageutils.h"
+#include "util/glm.h"
 
 static Stage5DrawData *stage5_draw_data;
 
@@ -23,7 +24,6 @@ void stage5_drawsys_init(void) {
 	stage5_draw_data = calloc(1, sizeof(*stage5_draw_data));
 	stage3d_init(&stage_3d_context, 16);
 
-	stage_3d_context.crot[0] = 60;
 
 	stage5_draw_data->stairs.rotshift = 140;
 	stage5_draw_data->stairs.rad = 2800;
@@ -37,28 +37,73 @@ void stage5_drawsys_shutdown(void) {
 
 static uint stage5_stairs_pos(Stage3D *s3d, vec3 pos, float maxrange) {
 	vec3 p = {0, 0, 0};
-	vec3 r = {0, 0, 6000};
+	vec3 r = {0, 0, 11.2};
 
 	return linear3dpos(s3d, pos, maxrange, p, r);
+}
+
+static void stage5_bg_setup_pbr_lighting(void) {
+	Camera3D *cam = &stage_3d_context.cam;
+
+	vec3 light_pos[] = {
+		{cam->pos[0],cam->pos[1],cam->pos[2]},
+		{0,0,cam->pos[2]-4},
+	};
+
+	vec3 light_colors[ARRAY_SIZE(light_pos)] = {
+		{235*1, 104*1, 32*1},
+		{1*0.2, 0, 132*0.1},
+	};
+
+
+	mat4 camera_trans;
+	glm_mat4_identity(camera_trans);
+	camera3d_apply_transforms(&stage_3d_context.cam, camera_trans);
+
+	r_uniform_mat4("camera_transform", camera_trans);
+	r_uniform_vec3_array("light_positions[0]", 0, ARRAY_SIZE(light_pos), light_pos);
+	r_uniform_vec3_array("light_colors[0]", 0, ARRAY_SIZE(light_colors), light_colors);
+	int light_count = ARRAY_SIZE(light_pos);
+	r_uniform_int("light_count", light_count);
+
+
+	r_uniform_vec3("ambient_color",0,0,0);
 }
 
 static void stage5_stairs_draw(vec3 pos) {
 	r_state_push();
 	r_mat_mv_push();
 	r_mat_mv_translate(pos[0], pos[1], pos[2]);
-	r_mat_mv_scale(300,300,300);
-	r_shader("tower_light");
-	r_uniform_sampler("tex", "stage5/tower");
-	r_uniform_vec3("lightvec", 0, 0, 0);
-	r_uniform_vec4("color", 0.1, 0.1, 0.5, 1);
-	r_uniform_float("strength", stage5_draw_data->stairs.light_strength);
-	r_draw_model("tower");
+
+	r_shader("pbr");
+	stage5_bg_setup_pbr_lighting();
+
+	r_uniform_float("metallic", 0);
+	r_uniform_sampler("tex", "stage5/stairs_diffuse");
+	r_uniform_sampler("roughness_map", "stage5/stairs_roughness");
+	r_uniform_sampler("normal_map", "stage5/stairs_normal");
+	r_uniform_sampler("ambient_map", "stage5/stairs_ambient");
+	r_draw_model("stage5/stairs");
+
+	r_uniform_sampler("tex", "stage5/wall_diffuse");
+	r_uniform_sampler("roughness_map", "stage5/wall_roughness");
+	r_uniform_sampler("normal_map", "stage5/wall_normal");
+	r_uniform_sampler("ambient_map", "stage5/wall_ambient");
+	r_draw_model("stage5/wall");
+
+	r_uniform_float("metallic", 1);
+	r_uniform_sampler("tex", "stage5/metal_diffuse");
+	r_uniform_sampler("roughness_map", "stage5/metal_roughness");
+	r_uniform_sampler("normal_map", "stage5/metal_normal");
+	r_uniform_sampler("ambient_map", "stage5/metal_ambient");
+	r_draw_model("stage5/metal");
+
 	r_mat_mv_pop();
 	r_state_pop();
 }
 
 void stage5_draw(void) {
-	stage3d_draw(&stage_3d_context, 30000, 1, (Stage3DSegment[]) { stage5_stairs_draw, stage5_stairs_pos });
+	stage3d_draw(&stage_3d_context, 20, 1, (Stage3DSegment[]) { stage5_stairs_draw, stage5_stairs_pos });
 }
 
 void iku_spell_bg(Boss *b, int t) {
