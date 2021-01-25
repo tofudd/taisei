@@ -15,6 +15,8 @@
 #include "stageutils.h"
 
 TASK(stage5_bg_update, NO_ARGS) {
+	Stage5DrawData *stage5_draw_data = stage5_get_draw_data();
+
 	Camera3D *cam = &stage_3d_context.cam;
 	float r = 3.7;
 	float vel = -0.01/r;
@@ -26,7 +28,12 @@ TASK(stage5_bg_update, NO_ARGS) {
 
 		cam->pos[2] = 2.6 - 11.2/M_TAU*vel*i;
 
-		
+		stage5_draw_data->stairs.light_strength *= 0.975;
+
+		if(rng_chance(0.007)) {
+			stage5_draw_data->stairs.light_strength = fmax(stage5_draw_data->stairs.light_strength, rng_range(5, 10));
+		}
+
 		YIELD;
 	}
 }

@@ -51,15 +51,18 @@ static void stage5_bg_setup_pbr_lighting(void) {
 		{0,0,cam->pos[2]-1},
 		{0,0,cam->pos[2]-6},
 		{0,0,cam->pos[2]+100},
+		{0, cam->pos[1], cam->pos[2]+120},
 	};
 
 	vec3 light_colors[ARRAY_SIZE(light_pos)] = {
 		{235*0.1, 104*0.1, 32*0.1},
 		{1*0.2, 0, 132*0.1},
 		{1*0.2, 0, 132*0.1},
-		{10000,10000,10000},
+		{1000,1000,1000},
+		{5000,8000,100000},  // thunder lightning
 	};
 
+	glm_vec3_scale(light_colors[4], stage5_draw_data->stairs.light_strength, light_colors[4]);
 
 	mat4 camera_trans;
 	glm_mat4_identity(camera_trans);
