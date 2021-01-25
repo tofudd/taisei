@@ -45,14 +45,19 @@ static uint stage5_stairs_pos(Stage3D *s3d, vec3 pos, float maxrange) {
 static void stage5_bg_setup_pbr_lighting(void) {
 	Camera3D *cam = &stage_3d_context.cam;
 
+	float f = 1+cos(global.frames*0.01);
 	vec3 light_pos[] = {
-		{cam->pos[0],cam->pos[1],cam->pos[2]},
-		{0,0,cam->pos[2]-4},
+		{cam->pos[0],cam->pos[1],cam->pos[2]-0.2},
+		{0,0,cam->pos[2]-1},
+		{0,0,cam->pos[2]-6},
+		{0,0,cam->pos[2]+100},
 	};
 
 	vec3 light_colors[ARRAY_SIZE(light_pos)] = {
-		{235*1, 104*1, 32*1},
+		{235*0.1, 104*0.1, 32*0.1},
 		{1*0.2, 0, 132*0.1},
+		{1*0.2, 0, 132*0.1},
+		{10000,10000,10000},
 	};
 
 
@@ -67,7 +72,7 @@ static void stage5_bg_setup_pbr_lighting(void) {
 	r_uniform_int("light_count", light_count);
 
 
-	r_uniform_vec3("ambient_color",0,0,0);
+	r_uniform_vec3("ambient_color",1,1,1);
 }
 
 static void stage5_stairs_draw(vec3 pos) {
@@ -91,7 +96,8 @@ static void stage5_stairs_draw(vec3 pos) {
 	r_uniform_sampler("ambient_map", "stage5/wall_ambient");
 	r_draw_model("stage5/wall");
 
-	r_uniform_float("metallic", 1);
+	r_uniform_float("metallic", 0);
+	r_uniform_vec3("ambient_color",0,0,0);
 	r_uniform_sampler("tex", "stage5/metal_diffuse");
 	r_uniform_sampler("roughness_map", "stage5/metal_roughness");
 	r_uniform_sampler("normal_map", "stage5/metal_normal");

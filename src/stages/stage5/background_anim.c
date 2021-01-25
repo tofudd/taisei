@@ -37,7 +37,6 @@ void stage5_bg_init_fullstage(void) {
 	cam->pos[1] = 2.5;
 	//cam->pos[2] = 0.1;
 	//cam->vel[2] = 0.01;
-	cam->rot.v[2] = 180;
 	cam->rot.v[0] = 80;
 	cam->fovy = STAGE3D_DEFAULT_FOVY*1.5;
 	INVOKE_TASK(stage5_bg_update);
