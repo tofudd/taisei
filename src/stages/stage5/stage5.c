@@ -67,6 +67,19 @@ static void stage5_preload(void) {
 		"stage5/spell_lightning",
 		"stage5/tower",
 	NULL);
+	preload_resources(RES_TEXTURE, RESF_DEFAULT,
+		"stage5/stairs_ambient",
+		"stage5/stairs_diffuse",
+		"stage5/stairs_normal",
+		"stage5/stairs_roughness",
+		"stage5/wall_ambient",
+		"stage5/wall_diffuse",
+		"stage5/wall_normal",
+		"stage5/wall_roughness",
+		"stage5/metal_diffuse",
+		"stage5/metal_normal",
+		"stage5/metal_roughness",
+	NULL);
 	preload_resources(RES_SHADER_PROGRAM, RESF_DEFAULT,
 		"tower_light",
 	NULL);
@@ -79,9 +92,6 @@ static void stage5_preload(void) {
 	preload_resources(RES_ANIM, RESF_DEFAULT,
 		"boss/iku",
 		"boss/iku_mid",
-	NULL);
-	preload_resources(RES_MODEL, RESF_DEFAULT,
-		"tower",
 	NULL);
 	preload_resources(RES_SFX, RESF_OPTIONAL,
 		"boom",
@@ -105,15 +115,13 @@ static void stage5_spellpractice_start(void) {
 	stage_start_bgm("stage5boss");
 }
 
-ShaderRule stage5_shaders[] = { NULL };
-
 StageProcs stage5_procs = {
 	.begin = stage5_start,
 	.preload = stage5_preload,
 	.end = stage5_end,
 	.draw = stage5_draw,
 	.event = stage5_events,
-	.shader_rules = stage5_shaders,
+	.shader_rules = stage5_bg_effects,
 	.spellpractice_procs = &stage5_spell_procs,
 };
 
@@ -122,5 +130,5 @@ StageProcs stage5_spell_procs = {
 	.preload = stage5_preload,
 	.end = stage5_end,
 	.draw = stage5_draw,
-	.shader_rules = stage5_shaders,
+	.shader_rules = stage5_bg_effects,
 };
