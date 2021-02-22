@@ -15,6 +15,6 @@
 #include "global.h"
 
 DEFINE_EXTERN_TASK(stage3_spell_firefly_storm) {
-    Boss *boss = INIT_BOSS_ATTACK();
-    BEGIN_BOSS_ATTACK();
+	Boss *boss = INIT_BOSS_ATTACK();
+	BEGIN_BOSS_ATTACK();
 }
