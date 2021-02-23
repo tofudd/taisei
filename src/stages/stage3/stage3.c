@@ -86,35 +86,50 @@ static void stage3_preload(void) {
 	portrait_preload_face_sprite("scuttle", "normal", RESF_DEFAULT);
 	preload_resources(RES_BGM, RESF_OPTIONAL, "stage3", "stage3boss", NULL);
 	preload_resources(RES_SPRITE, RESF_DEFAULT,
-		"stage3/border",
+		"stage3/ground_ambient",
+		"stage3/ground_normal",
+		"stage3/ground_roughness",
+		"stage3/ground_diffuse",
+		"stage3/trees_ambient",
+		"stage3/trees_normal",
+		"stage3/trees_roughness",
+		"stage3/trees_diffuse",
+		"stage3/rocks_ambient",
+		"stage3/rocks_normal",
+		"stage3/rocks_roughness",
+		"stage3/rocks_diffuse",
+		"stage3/leaves_ambient",
+		"stage3/leaves_normal",
+		"stage3/leaves_roughness",
+		"stage3/leaves_diffuse",
 		"stage3/spellbg1",
 		"stage3/spellbg2",
 		"stage3/wspellbg",
 		"stage3/wspellclouds",
 		"stage3/wspellswarm",
-		NULL
-	);
+	NULL);
+	preload_resources(RES_MODEL, RESF_DEFAULT,
+		"stage3/ground",
+		"stage3/rocks",
+		"stage3/trees",
+		"stage3/leaves",
+	NULL);
 	preload_resources(RES_SHADER_PROGRAM, RESF_DEFAULT,
-		"tunnel",
 		"zbuf_fog",
 		"glitch",
 		"maristar_bombbg",
-		NULL
-	);
+	NULL);
 	preload_resources(RES_SHADER_PROGRAM, RESF_OPTIONAL,
 		"lasers/accelerated",
 		"lasers/sine_expanding",
-		NULL
-	);
+	NULL);
 	preload_resources(RES_ANIM, RESF_DEFAULT,
 		"boss/scuttle",
-		"boss/wriggle",
-		NULL
-	);
+		"boss/wriggleex",
+	NULL);
 	preload_resources(RES_SFX, RESF_OPTIONAL,
 		"laser1",
-		NULL
-	);
+	NULL);
 }
 
 static void stage3_end(void) {
