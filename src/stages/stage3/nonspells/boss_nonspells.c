@@ -92,3 +92,15 @@ DEFINE_EXTERN_TASK(stage3_boss_nonspell_1) {
 	BEGIN_BOSS_ATTACK();
 	wriggle_nonspell_common(boss, 1);
 }
+
+DEFINE_EXTERN_TASK(stage3_boss_nonspell_2) {
+	Boss *boss = INIT_BOSS_ATTACK();
+	BEGIN_BOSS_ATTACK();
+	wriggle_nonspell_common(boss, 2);
+}
+
+DEFINE_EXTERN_TASK(stage3_boss_nonspell_3) {
+	Boss *boss = INIT_BOSS_ATTACK();
+	BEGIN_BOSS_ATTACK();
+	wriggle_nonspell_common(boss, 3);
+}
